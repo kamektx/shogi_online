@@ -6,8 +6,10 @@ import { faClipboard, faLightbulb } from '@fortawesome/free-regular-svg-icons'
 import Select from 'react-select'
 import MyHead from '../components/MyHead'
 import Board from '../components/Board'
+import TurnCounter from './TurnCounter'
+import { BackToStartButton } from './OperationButtons'
 
-export default function Game() {
+export default function Game({ transitionToID, currentID }: { transitionToID: (id: string) => boolean, currentID: string }) {
 
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -21,16 +23,16 @@ export default function Game() {
 
       <header className={cn(styles.header, styles.header_footer)}>
         <div className={styles.header_footer_main}>
-          <div className={styles.operation_button}><Icon icon={faStepBackward} /></div>
+          <BackToStartButton transitionToID={transitionToID} />
           <div className={styles.operation_button}><Icon icon={faChevronLeft} style={{ left: "-2px", fontSize: "110%" }} /></div>
-          <div className={styles.condition}>▽ 32</div>
+          <TurnCounter currentID={currentID}></TurnCounter>
           <div className={styles.operation_button}><Icon icon={faChevronRight} style={{ left: "2px", fontSize: "110%" }} /></div>
           <div className={styles.operation_button}><Icon icon={faStepForward} /></div>
         </div>
       </header>
 
       <main className={styles.main}>
-        <Board />
+        <Board transitionToID={transitionToID} currentID={currentID} />
       </main>
 
       <footer className={cn(styles.footer, styles.header_footer)}>

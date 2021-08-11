@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $max-width: 600px;
 $b2-breakpoint: 400px;
 
@@ -87,6 +89,7 @@ $b2-breakpoint: 400px;
   align-items: center;
   font-size: 24px;
   position: relative;
+  cursor: pointer;
 
   &>* {
     position: relative;
@@ -104,14 +107,23 @@ $b2-breakpoint: 400px;
   align-items: center;
 }
 
+.pointer {
+  cursor: pointer !important;
+}
+
+.hidden {
+  opacity: 0;
+}
+
 .board_wrap {
   width: 100%;
   flex: 0;
   display: table;
   border-collapse: collapse;
   $max-width-font-size: 32px;
-  $b1-font-size: ($max-width-font-size / $max-width) * 100vw;
+  $b1-font-size: math.div($max-width-font-size, $max-width) * 100vw;
   font-size: $max-width-font-size;
+  cursor: default;
 
   @include b1 {
     font-size: $b1-font-size;
@@ -141,26 +153,46 @@ $b2-breakpoint: 400px;
 
   .square {
     border: 1.5px solid rgba(0, 0, 0, 0.4);
+
+    .piece {
+      transform: translate(0, -12%);
+    }
   }
 
   .stand {
 
     .stand_square {
       position: relative;
+      border: 1.5px solid rgba(0, 0, 0, 0.4);
 
       &>.inner {
         padding-left: 12px;
         text-align: left;
 
         .piece {
+          transform: translate(0, 4%);
+        }
+
+        &>* {
           display: table-cell;
           vertical-align: middle;
         }
 
         .multiply {
-          display: table-cell;
           font-size: 0.7em;
-          vertical-align: middle;
+        }
+      }
+
+      &.win_lose {
+        font-size: 1em;
+        font-weight: 900;
+
+        &.win {
+          color: rgb(255, 30, 30);
+        }
+
+        &.lose {
+          color: rgb(0, 68, 255);
         }
       }
     }
