@@ -7,19 +7,19 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-export function OperationButton({ className, style, icon, onClick }: { className?: string, style?: React.CSSProperties, icon: IconProp, onClick: () => void }) {
+export function OperationButton({ className, style, icon, _onClick }: { className?: string, style?: React.CSSProperties, icon: IconProp, _onClick: () => void }) {
   return (
-    <div className={cn(styles.operation_button, className)} onClick={onClick}>
+    <div className={cn(styles.operation_button, className)} onClick={_onClick}>
       <FontAwesomeIcon icon={icon} style={style} />
     </div>
   )
 }
 
 export function BackToStartButton({ transitionToID }: { transitionToID: (id: string) => boolean }) {
-  const onClick = () => {
+  const _onClick = () => {
     transitionToID("START");
   }
   return (
-    <OperationButton icon={faStepBackward} onClick={onClick} />
+    <OperationButton icon={faStepBackward} _onClick={_onClick} />
   )
 }

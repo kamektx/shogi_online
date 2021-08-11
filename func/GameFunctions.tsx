@@ -39,22 +39,24 @@ export const createID = () => {
     }
     return str;
   }
-  const randomArray = new Uint32Array(4);
-  window.crypto.getRandomValues(randomArray);
-  return EncodeBase32(randomArray);
+  if (process.browser) {
+    const randomArray = new Uint32Array(4);
+    window.crypto.getRandomValues(randomArray);
+    return EncodeBase32(randomArray);
+  }
 }
 
-export const canSelectMovingPiece = (move: TMove, currentID: string): boolean => {
-  if (boardStates.get(currentID)!.count != move.count - 1) return false;
-  let moverCapturedPieces = boardStates.get(currentID)!.senteCapturedPieces;
-  let opponentCapturedPieces = boardStates.get(currentID)!.goteCapturedPieces;
-  let moverBoard = boardStates.get(currentID)!.senteBoard;
-  let opponentBoard = boardStates.get(currentID)!.goteBoard;
+export const canSelectMovingPiece = (move: TMove): boolean => {
+  if (boardStates.get(move.back)!.count != move.count - 1) return false;
+  let moverCapturedPieces = boardStates.get(move.back)!.senteCapturedPieces;
+  let opponentCapturedPieces = boardStates.get(move.back)!.goteCapturedPieces;
+  let moverBoard = boardStates.get(move.back)!.senteBoard;
+  let opponentBoard = boardStates.get(move.back)!.goteBoard;
   if (move.count % 2 === 1) {
-    moverCapturedPieces = boardStates.get(currentID)!.goteCapturedPieces;
-    opponentCapturedPieces = boardStates.get(currentID)!.senteCapturedPieces;
-    moverBoard = boardStates.get(currentID)!.goteBoard;
-    opponentBoard = boardStates.get(currentID)!.senteBoard;
+    moverCapturedPieces = boardStates.get(move.back)!.goteCapturedPieces;
+    opponentCapturedPieces = boardStates.get(move.back)!.senteCapturedPieces;
+    moverBoard = boardStates.get(move.back)!.goteBoard;
+    opponentBoard = boardStates.get(move.back)!.senteBoard;
   }
 
   if (move.before.row % 100 === 0) {
@@ -70,33 +72,34 @@ export const canSelectMovingPiece = (move: TMove, currentID: string): boolean =>
  * It ignores `TMove.after.piece: TPieceAll` property.
  * @returns 0: can't move, 1: FUNARI only or Already NARI, 2: can choose NARI or FUNARI, 3: NARI only
  */
-export const canMovePiece = (move: TMove, currentID: string): number => {
-  if (boardStates.get(currentID)!.count != move.count - 1) return 0;
+export const canMovePiece = (move: TMove): number => {
+  if (boardStates.get(move.back)!.count != move.count - 1) return 0;
 
-  let moverCapturedPieces = boardStates.get(currentID)!.senteCapturedPieces;
-  let opponentCapturedPieces = boardStates.get(currentID)!.goteCapturedPieces;
-  let moverBoard = boardStates.get(currentID)!.senteBoard;
-  let opponentBoard = boardStates.get(currentID)!.goteBoard;
+  if (move.after.row % 100 === 0) return 0;
+
+  let moverCapturedPieces = boardStates.get(move.back)!.senteCapturedPieces;
+  let opponentCapturedPieces = boardStates.get(move.back)!.goteCapturedPieces;
+  let moverBoard = boardStates.get(move.back)!.senteBoard;
+  let opponentBoard = boardStates.get(move.back)!.goteBoard;
   let flip = 1;
   if (move.count % 2 === 1) {
-    moverCapturedPieces = boardStates.get(currentID)!.goteCapturedPieces;
-    opponentCapturedPieces = boardStates.get(currentID)!.senteCapturedPieces;
-    moverBoard = boardStates.get(currentID)!.goteBoard;
-    opponentBoard = boardStates.get(currentID)!.senteBoard;
+    moverCapturedPieces = boardStates.get(move.back)!.goteCapturedPieces;
+    opponentCapturedPieces = boardStates.get(move.back)!.senteCapturedPieces;
+    moverBoard = boardStates.get(move.back)!.goteBoard;
+    opponentBoard = boardStates.get(move.back)!.senteBoard;
     flip = -1;
   }
 
   const mba = moverBoard[move.after.row][move.after.column];
   const oba = opponentBoard[move.after.row][move.after.column];
 
-  if (move.before.row % 100 == 0) {
+  if (move.before.row % 100 === 0) {
     if (mba !== "") return 0;
     if (oba !== "") return 0;
-    // if (move.before.piece != move.after.piece) return false;
     if (move.before.piece === "歩") {
       if (move.after.row - 1 * flip < 1 || move.after.row - 1 * flip > 9) return 0;
       for (let i = 1; i <= 9; i++) {
-        if (moverBoard[move.after.row][i] === "歩") return 0;
+        if (moverBoard[i][move.after.column] === "歩") return 0;
       }
     } else if (move.before.piece === "桂") {
       if (move.after.row - 2 * flip < 1 || move.after.row - 2 * flip > 9) return 0;
@@ -184,10 +187,10 @@ export const canMovePiece = (move: TMove, currentID: string): number => {
   }
 }
 
-export const getCapturedPiece = (move: TMove, currentID: string): TPieceIncludeNull => {
-  let opponentBoard = boardStates.get(currentID)!.goteBoard;
+export const getCapturedPiece = (move: TMove): TPieceIncludeNull => {
+  let opponentBoard = boardStates.get(move.back)!.goteBoard;
   if (move.count % 2 === 1) {
-    opponentBoard = boardStates.get(currentID)!.senteBoard;
+    opponentBoard = boardStates.get(move.back)!.senteBoard;
   }
   return opponentBoard[move.after.row][move.after.column];
 }
@@ -261,7 +264,7 @@ export const makeNewMove = (currentID: string, beforeRow: number, beforeColumn: 
 
   return {
     count: boardStates.get(currentID)!.count + 1,
-    id: createID(),
+    id: createID()!,
     name: name2,
     before: {
       row: beforeRow, // START: 0, senteStand: 100, goteStand: 200
@@ -328,10 +331,10 @@ export const handleNewMove = (move: TMove): boolean => {
     opponentBoard = boardStates.get(move.back)!.senteBoard;
   }
 
-  if (!canSelectMovingPiece(move, move.back)) return false;
-  if (!canMovePiece(move, move.back)) return false;
+  if (!canSelectMovingPiece(move)) return false;
+  if (!canMovePiece(move)) return false;
   if (!isNariOK(move)) return false;
-  if (move.captured !== getCapturedPiece(move, move.back)) return false;
+  if (move.captured !== getCapturedPiece(move)) return false;
 
   moves.set(move.id, move);
   if (move.isDraft) moves.get(move.back)!.draft.unshift(move.id);

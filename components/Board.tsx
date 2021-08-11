@@ -2,19 +2,89 @@ import styles from '../styles/Home.module.scss'
 import cn from 'classnames'
 import StandSquare from './StandSquare'
 import Square from './Square';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import BoardIndex from './BoardIndex';
 import WinLose from './WinLose';
+import { TMove, TPieceFace, TPieceIncludeNull } from '../types/types';
+import { canMovePiece, canSelectMovingPiece, getCapturedPiece, getNariPiece, handleNewMove, makeNewMove } from '../func/GameFunctions';
+import { playerName } from '../pages';
+
+export type TSelection = {
+  selected: boolean,
+  movementChecked: boolean,
+  selectedRow: number,
+  selectedColumn: number,
+  selectedPiece: TPieceIncludeNull,
+  move: TMove,
+}
 
 export default function Board({ transitionToID, currentID }: { transitionToID: (id: string) => boolean, currentID: string }) {
+  const initialSelection = {
+    selected: false,
+    movementChecked: false,
+    selectedRow: 0,
+    selectedColumn: 0,
+    selectedPiece: "",
+    move: makeNewMove(currentID, 0, 0, "", playerName),
+  } as TSelection;
+  const [selection, setSelection] = useState<TSelection>(initialSelection);
 
+  const _onSquareClick = (row: number, column: number, pieceName: TPieceIncludeNull) => {
+    if (selection.selected) {
+      const move = { ...selection.move };
+      move.after = {
+        row: row,
+        column: column,
+        piece: pieceName,
+      }
+      switch (canMovePiece(move)) {
+        case 0:
+          setSelection(initialSelection);
+          return;
+
+        case 1:
+          move.captured = getCapturedPiece(move);
+          move.natta = false;
+          move.after.piece = move.before.piece
+          setSelection(initialSelection);
+          handleNewMove(move);
+          transitionToID(move.id);
+          return;
+
+        case 2:
+        case 3:
+          move.captured = getCapturedPiece(move);
+          move.natta = true;
+          move.after.piece = getNariPiece(move.before.piece as TPieceFace);
+          setSelection(initialSelection);
+          handleNewMove(move);
+          transitionToID(move.id);
+          return;
+
+        default:
+          return;
+      }
+    } else {
+      const move = makeNewMove(currentID, row, column, pieceName, playerName);
+      if (!canSelectMovingPiece(move)) return;
+      setSelection({
+        selected: true,
+        movementChecked: false,
+        selectedRow: row,
+        selectedColumn: column,
+        selectedPiece: pieceName,
+        move: move
+      });
+      return;
+    }
+  }
 
   const renderBoardRow = (row: number) => {
     const list: JSX.Element[] = [];
     list.push(<th className={cn(styles.holpad, styles.padding)} key={100 * row + 10} />)
     for (let i = 9; i >= 1; i--) {
       list.push(
-        <Square currentID={currentID} column={i} row={row} key={100 * row + i} />
+        <Square _onSquareClick={_onSquareClick} selection={selection} currentID={currentID} column={i} row={row} key={100 * row + i} />
       )
     }
     list.push(<BoardIndex forRow={true} index={row} key={100 * row} />)
@@ -72,19 +142,19 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
       <thead className={cn(styles.stand, styles.gote)}>
         <tr>
           <th className={cn(styles.holpad, styles.padding)} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="金" position={0b1001} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="銀" position={0b1000} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="桂" position={0b1000} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="香" position={0b1100} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="金" position={0b1001} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="銀" position={0b1000} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="桂" position={0b1000} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="香" position={0b1100} />
           <th className={cn(styles.blank, styles.padding)} />
           <th className={cn(styles.holpad, styles.padding)} />
 
         </tr>
         <tr>
           <th className={cn(styles.holpad, styles.padding)} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
-          <StandSquare sente={false} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
-          <StandSquare sente={false} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
           <WinLose colSpan={1} winOrLose={"win"} position={0b0110} />
           <th className={cn(styles.blank, styles.padding)} />
           <th className={cn(styles.holpad, styles.padding)} />
@@ -97,18 +167,18 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
         <tr>
           <th className={cn(styles.holpad, styles.padding)} />
           <th className={cn(styles.blank, styles.padding)} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="金" position={0b1001} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="銀" position={0b1000} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="桂" position={0b1000} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="香" position={0b1100} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="金" position={0b1001} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="銀" position={0b1000} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="桂" position={0b1000} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="香" position={0b1100} />
           <th className={cn(styles.holpad, styles.padding)} />
         </tr>
         <tr>
           <th className={cn(styles.holpad, styles.padding)} />
           <th className={cn(styles.blank, styles.padding)} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
-          <StandSquare sente={true} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
-          <StandSquare sente={true} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
+          <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
           <WinLose colSpan={1} winOrLose={"lose"} position={0b0110} />
           <th className={cn(styles.holpad, styles.padding)} />
         </tr>

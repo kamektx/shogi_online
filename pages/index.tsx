@@ -4,7 +4,6 @@ import Game from '../components/Game'
 import MyHead from '../components/MyHead'
 import { useState } from 'react'
 import { TMove, TBoardState, TPieceFace, TPieceAll } from '../types/types'
-import { canMovePiece, canSelectMovingPiece, createID, getCapturedPiece, isNariOK, makeNewBoardState } from '../func/GameFunctions'
 
 export const gameProperty = {
   csaVersion: "V2.2",

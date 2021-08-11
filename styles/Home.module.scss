@@ -120,6 +120,7 @@ $b2-breakpoint: 400px;
   flex: 0;
   display: table;
   border-collapse: collapse;
+  background-clip: padding-box;
   $max-width-font-size: 32px;
   $b1-font-size: math.div($max-width-font-size, $max-width) * 100vw;
   font-size: $max-width-font-size;
@@ -135,6 +136,14 @@ $b2-breakpoint: 400px;
     //border: solid 1px rgba(0, 0, 0, 0.6);
     text-align: center;
     vertical-align: middle;
+  }
+
+  .red {
+    background-color: #ffa8a8 !important;
+  }
+
+  .red_light {
+    background-color: #ffd1d1 !important;
   }
 
   .piece {
@@ -153,6 +162,8 @@ $b2-breakpoint: 400px;
 
   .square {
     border: 1.5px solid rgba(0, 0, 0, 0.4);
+    background-color: #ffffff;
+    background-clip: padding-box;
 
     .piece {
       transform: translate(0, -12%);
@@ -164,6 +175,8 @@ $b2-breakpoint: 400px;
     .stand_square {
       position: relative;
       border: 1.5px solid rgba(0, 0, 0, 0.4);
+      background-color: #ffffff;
+      background-clip: padding-box;
 
       &>.inner {
         padding-left: 12px;
