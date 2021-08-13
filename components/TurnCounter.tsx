@@ -1,6 +1,6 @@
 import styles from '../styles/Home.module.scss'
 import cn from 'classnames'
-import { moves } from '../pages'
+import { moves } from '../pages/games/[gameID]'
 
 export default function TurnCounter({ currentID }: { currentID: string }) {
   const count = moves.get(currentID)!.count;

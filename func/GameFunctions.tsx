@@ -1,4 +1,4 @@
-import { boardStates, gameProperty, moves } from "../pages";
+import { boardStates, gameProperty, moves } from "../pages/games/[gameID]";
 import { TMove, TPieceFace, TPieceAll, TPieceIncludeNull, TPieceNari, TBoardState } from "../types/types";
 
 export const createID = () => {
@@ -44,6 +44,25 @@ export const createID = () => {
     window.crypto.getRandomValues(randomArray);
     return EncodeBase32(randomArray);
   }
+  return "";
+}
+
+export const ordinal = (num: number): string => {
+  let result;
+  const s1 = +('' + num).slice(-1);
+  const s2 = +('' + num).slice(-2);
+  if (s2 >= 11 && s2 <= 13) {
+    result = num + 'th';
+  } else if (s1 === 1) {
+    result = num + 'st';
+  } else if (s1 === 2) {
+    result = num + 'nd';
+  } else if (s1 === 3) {
+    result = num + 'rd';
+  } else {
+    result = num + 'th';
+  }
+  return result;
 }
 
 export const canSelectMovingPiece = (move: TMove): boolean => {
@@ -113,7 +132,7 @@ export const canMovePiece = (move: TMove): number => {
       桂: [[-2, -1], [-2, 1]],
       銀: [[-1, 0], [-1, -1], [1, -1], [1, 1], [-1, 1]],
       金: [[-1, 0], [-1, -1], [0, -1], [1, 0], [0, 1], [-1, 1]],
-      王: [[-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1]],
+      玉: [[-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1]],
       杏: [[-1, 0], [-1, -1], [0, -1], [1, 0], [0, 1], [-1, 1]],
       圭: [[-1, 0], [-1, -1], [0, -1], [1, 0], [0, 1], [-1, 1]],
       全: [[-1, 0], [-1, -1], [0, -1], [1, 0], [0, 1], [-1, 1]],
@@ -176,7 +195,11 @@ export const canMovePiece = (move: TMove): number => {
         }
         switch (move.before.piece) {
           case "金":
-          case "王":
+          case "玉":
+          case "杏":
+          case "圭":
+          case "全":
+          case "と":
             return 1;
           default:
             if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
@@ -202,14 +225,14 @@ export const getNariPiece = (pieceFace: TPieceFace): TPieceNari | "" => {
     桂: "圭",
     銀: "全",
     金: "",
-    王: "",
+    玉: "",
     角: "馬",
     飛: "龍"
   } as Record<TPieceFace, TPieceNari | "">
   return table[pieceFace]
 }
 
-export const getFunariPiece = (pieceFace: TPieceAll): TPieceFace => {
+export const getFunariPiece = (pieceName: TPieceIncludeNull): TPieceFace | "" => {
   const table = {
     と: "歩",
     杏: "香",
@@ -221,12 +244,33 @@ export const getFunariPiece = (pieceFace: TPieceAll): TPieceFace => {
     香: "香",
     桂: "桂",
     銀: "銀",
+    金: "金",
     角: "角",
     飛: "飛",
-    金: "金",
-    王: "王",
-  } as Record<TPieceAll, TPieceFace>
-  return table[pieceFace]
+    玉: "玉",
+    "": "",
+  } as Record<TPieceIncludeNull, TPieceFace | "">
+  return table[pieceName]
+}
+
+export const getCSAPieceName = (pieceName: TPieceAll): string => {
+  const table = {
+    と: "TO",
+    杏: "NY",
+    圭: "NK",
+    全: "NG",
+    馬: "UM",
+    龍: "RY",
+    歩: "FU",
+    香: "KY",
+    桂: "KE",
+    銀: "GI",
+    金: "KI",
+    角: "KA",
+    飛: "HI",
+    玉: "OU",
+  } as Record<TPieceAll, string>;
+  return table[pieceName];
 }
 
 export const isNariOK = (move: TMove): boolean => {
@@ -302,8 +346,10 @@ export const makeNewBoardState = (move: TMove) => {
   }
   state.count = move.count;
   state.id = move.id;
+  if (move.captured == "玉") state.isEnd = true;
+
   if (move.captured !== "") {
-    moverCapturedPieces.push(getFunariPiece(move.captured));
+    moverCapturedPieces.push(getFunariPiece(move.captured) as TPieceFace);
     opponentBoard[move.after.row][move.after.column] = "";
   }
   if (move.before.row % 100 === 0) {
@@ -337,8 +383,23 @@ export const handleNewMove = (move: TMove): boolean => {
   if (move.captured !== getCapturedPiece(move)) return false;
 
   moves.set(move.id, move);
-  if (move.isDraft) moves.get(move.back)!.draft.unshift(move.id);
-  else moves.get(move.back)!.forward.unshift(move.id);
+
+  if (move.isDraft) {
+    moves.get(move.back)!.draft.unshift(move.id);
+  } else {
+    moves.get(move.back)!.forward.unshift(move.id);
+    let currentMove = move;
+    let prevMove = moves.get(currentMove.back)!
+    while (prevMove.id !== "START") {
+      currentMove = prevMove;
+      prevMove = moves.get(currentMove.back)!;
+      const index = prevMove.forward.indexOf(currentMove.id);
+      if (index === -1) return false;
+      if (index !== 0) {
+        prevMove.forward.splice(index, 1).unshift(currentMove.id);
+      }
+    }
+  }
 
   boardStates.set(move.id, makeNewBoardState(move));
 

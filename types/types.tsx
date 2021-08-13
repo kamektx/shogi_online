@@ -1,4 +1,4 @@
-export type TPieceFace = ("王" | "金" | "銀" | "桂" | "香" | "角" | "飛" | "歩")
+export type TPieceFace = ("玉" | "金" | "銀" | "桂" | "香" | "角" | "飛" | "歩")
 
 export type TPieceNari = ("全" | "圭" | "杏" | "馬" | "龍" | "と")
 
@@ -13,6 +13,7 @@ export type TBoardState = {
   goteCapturedPieces: Array<TPieceFace>,
   senteBoard: Array<Array<TPieceIncludeNull>>,
   goteBoard: Array<Array<TPieceIncludeNull>>,
+  isEnd: boolean,
 }
 
 export type TMove = {

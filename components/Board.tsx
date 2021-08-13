@@ -7,7 +7,7 @@ import BoardIndex from './BoardIndex';
 import WinLose from './WinLose';
 import { TMove, TPieceFace, TPieceIncludeNull } from '../types/types';
 import { canMovePiece, canSelectMovingPiece, getCapturedPiece, getNariPiece, handleNewMove, makeNewMove } from '../func/GameFunctions';
-import { playerName } from '../pages';
+import { playerInfo } from '../pages/games/[gameID]';
 
 export type TSelection = {
   selected: boolean,
@@ -18,14 +18,15 @@ export type TSelection = {
   move: TMove,
 }
 
-export default function Board({ transitionToID, currentID }: { transitionToID: (id: string) => boolean, currentID: string }) {
+export default function Board({ transitionToID, currentID, _onSelectNariFunari }
+  : { transitionToID: (id: string) => boolean, currentID: string, _onSelectNariFunari: (move: TMove, callback: (move: TMove) => void) => void }) {
   const initialSelection = {
     selected: false,
     movementChecked: false,
     selectedRow: 0,
     selectedColumn: 0,
     selectedPiece: "",
-    move: makeNewMove(currentID, 0, 0, "", playerName),
+    move: makeNewMove(currentID, 0, 0, "", playerInfo.name),
   } as TSelection;
   const [selection, setSelection] = useState<TSelection>(initialSelection);
 
@@ -47,17 +48,24 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
           move.natta = false;
           move.after.piece = move.before.piece
           setSelection(initialSelection);
-          handleNewMove(move);
+          if (!handleNewMove(move)) throw new Error("Can't handle new move!");
           transitionToID(move.id);
           return;
 
         case 2:
+          move.captured = getCapturedPiece(move);
+          _onSelectNariFunari(move, (_move) => {
+            setSelection(initialSelection);
+            if (!handleNewMove(move)) throw new Error("Can't handle new move!");
+            transitionToID(move.id);
+          });
+          return;
         case 3:
           move.captured = getCapturedPiece(move);
           move.natta = true;
           move.after.piece = getNariPiece(move.before.piece as TPieceFace);
           setSelection(initialSelection);
-          handleNewMove(move);
+          if (!handleNewMove(move)) throw new Error("Can't handle new move!");
           transitionToID(move.id);
           return;
 
@@ -65,7 +73,7 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
           return;
       }
     } else {
-      const move = makeNewMove(currentID, row, column, pieceName, playerName);
+      const move = makeNewMove(currentID, row, column, pieceName, playerInfo.name);
       if (!canSelectMovingPiece(move)) return;
       setSelection({
         selected: true,
@@ -155,7 +163,7 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={false} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
-          <WinLose colSpan={1} winOrLose={"win"} position={0b0110} />
+          <WinLose currentID={currentID} sente={false} position={0b0110} />
           <th className={cn(styles.blank, styles.padding)} />
           <th className={cn(styles.holpad, styles.padding)} />
         </tr>
@@ -179,7 +187,7 @@ export default function Board({ transitionToID, currentID }: { transitionToID: (
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="飛" position={0b0011} />
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={2} currentID={currentID} pieceName="角" position={0b0010} />
           <StandSquare _onSquareClick={_onSquareClick} selection={selection} sente={true} colSpan={3} currentID={currentID} pieceName="歩" position={0b0010} />
-          <WinLose colSpan={1} winOrLose={"lose"} position={0b0110} />
+          <WinLose currentID={currentID} sente={true} position={0b0110} />
           <th className={cn(styles.holpad, styles.padding)} />
         </tr>
       </thead>
