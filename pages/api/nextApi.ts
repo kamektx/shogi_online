@@ -16,7 +16,7 @@ const MyNextApi = async (
       case "sendMessage": {
         const result = await messages.insertOne({ ...posted.message!, gameID: posted.gameID });
         if (!result.acknowledged) {
-          res.status(200).json({ isMessageOK: false });
+          res.status(200).json({ isMessageOK: false, error: "not acknowledged", result: result });
           break;
         }
         const checkResult = await messages.find({
@@ -30,10 +30,12 @@ const MyNextApi = async (
           break;
         }
         if (checkResult[1].messageID !== posted.message!.lastMessageID) {
-          await messages.findOneAndDelete({
-            _id: result.insertedId
-          })
-          res.status(200).json({ isMessageOK: false });
+          if (result.insertedId != undefined) {
+            await messages.findOneAndDelete({
+              _id: result.insertedId
+            })
+          }
+          res.status(200).json({ isMessageOK: false, error: "checkResult[1].messageID !== posted.message.lastMessageID", result: result });
           break;
         }
         res.socket?.server?.io?.in(posted.gameID).except(posted.socketID).emit("message", posted.message);

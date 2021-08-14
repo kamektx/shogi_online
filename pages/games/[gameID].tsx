@@ -121,6 +121,8 @@ export default function Home() {
     if (!res.ok) throw new Error("sendMessage api failed.");
     const data = await res.json();
     if (!data.isMessageOK) {
+      console.log(data.error)
+      console.log(data.result)
       requestAllMessages();
       return false;
     }
