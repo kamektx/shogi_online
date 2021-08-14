@@ -6,10 +6,10 @@ import { faChevronLeft, faChevronRight, faStepBackward, faStepForward } from '@f
 import React, { SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { TInfomation } from './Information';
+import { TInformation } from './Information';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { getCSAPieceName } from '../func/GameFunctions';
-import { TPieceAll } from '../types/types';
+import { TPieceAll, TState } from '../types/types';
 
 export function OperationButton({ className, style, icon, _onClick }: { className?: string, style?: React.CSSProperties, icon: IconProp, _onClick: () => void }) {
   return (
@@ -19,11 +19,11 @@ export function OperationButton({ className, style, icon, _onClick }: { classNam
   )
 }
 
-export function BackToStartButton({ transitionToID, currentID, setInfomation }: { transitionToID: (id: string) => boolean, currentID: string, setInfomation: (value: TInfomation) => void }) {
+export function BackToStartButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
   const _onClick = () => {
     if (currentID !== "START") {
-      transitionToID("START");
-      setInfomation({ text: playerInfo.name + " has put the phase back to the first.", ms: 3000 })
+      changeCurrentID("START");
+      setInformation({ text: playerInfo.name + " has put the phase back to the first.", ms: 3000 })
     }
   }
   return (
@@ -33,12 +33,12 @@ export function BackToStartButton({ transitionToID, currentID, setInfomation }: 
   )
 }
 
-export function BackButton({ transitionToID, currentID, setInfomation }: { transitionToID: (id: string) => boolean, currentID: string, setInfomation: (value: TInfomation) => void }) {
+export function BackButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
   const _onClick = () => {
     if (currentID !== "START") {
       const backID = moves.get(currentID)!.back;
-      transitionToID(backID);
-      setInfomation({ text: playerInfo.name + " has put the phase back to the previous.", ms: 3000 })
+      changeCurrentID(backID);
+      setInformation({ text: playerInfo.name + " has put the phase back to the previous.", ms: 3000 })
     }
   }
   return (
@@ -48,13 +48,13 @@ export function BackButton({ transitionToID, currentID, setInfomation }: { trans
   )
 }
 
-export function ForwardButton({ transitionToID, currentID, setInfomation }: { transitionToID: (id: string) => boolean, currentID: string, setInfomation: (value: TInfomation) => void }) {
+export function ForwardButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
   const forwardIDs = moves.get(currentID)!.forward;
   const isDisabled = forwardIDs.length === 0;
   const _onClick = () => {
     if (isDisabled) return;
-    transitionToID(forwardIDs[0]);
-    setInfomation({ text: playerInfo.name + " has moved the phase to the next.", ms: 3000 })
+    changeCurrentID(forwardIDs[0]);
+    setInformation({ text: playerInfo.name + " has moved the phase to the next.", ms: 3000 })
   }
   return (
     <OperationButton icon={faChevronRight} _onClick={_onClick} className={cn({
@@ -63,7 +63,7 @@ export function ForwardButton({ transitionToID, currentID, setInfomation }: { tr
   )
 }
 
-export function GoToLatestButton({ transitionToID, currentID, setInfomation }: { transitionToID: (id: string) => boolean, currentID: string, setInfomation: (value: TInfomation) => void }) {
+export function GoToLatestButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
   let currentMove = moves.get(currentID)!;
   let forwardIDs = currentMove.forward;
   const isDisabled = forwardIDs.length === 0;
@@ -73,8 +73,8 @@ export function GoToLatestButton({ transitionToID, currentID, setInfomation }: {
       currentMove = moves.get(currentMove.forward[0])!;
       forwardIDs = currentMove.forward;
     }
-    transitionToID(currentMove.id);
-    setInfomation({ text: playerInfo.name + " has moved the phase to the latest.", ms: 3000 });
+    changeCurrentID(currentMove.id);
+    setInformation({ text: playerInfo.name + " has moved the phase to the latest.", ms: 3000 });
   }
   return (
     <OperationButton icon={faStepForward} _onClick={_onClick} className={cn({
@@ -83,7 +83,7 @@ export function GoToLatestButton({ transitionToID, currentID, setInfomation }: {
   )
 }
 
-export function ExportKifuButton({ setInfomation, currentID }: { setInfomation: (value: TInfomation) => void, currentID: string }) {
+export function ExportKifuButton({ setInformation, currentID }: Pick<TState, "currentID" | "setInformation">) {
   const _onClick = () => {
     let str = "";
     str += gameProperty.csaVersion + "\n";
@@ -109,7 +109,7 @@ export function ExportKifuButton({ setInfomation, currentID }: { setInfomation: 
       navigator.clipboard.writeText(str);
     }
 
-    setInfomation({
+    setInformation({
       text: "Exported the Kifu (CSA Format) to the clipbord.",
       color: "#2d8c0d",
       ms: 3000

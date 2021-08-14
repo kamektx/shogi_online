@@ -5,7 +5,7 @@ import Square from './Square';
 import { ReactElement, useState } from 'react';
 import BoardIndex from './BoardIndex';
 import WinLose from './WinLose';
-import { TMove, TPieceFace, TPieceIncludeNull } from '../types/types';
+import { TMessage, TMove, TPieceFace, TPieceIncludeNull, TState } from '../types/types';
 import { canMovePiece, canSelectMovingPiece, getCapturedPiece, getNariPiece, handleNewMove, makeNewMove } from '../func/GameFunctions';
 import { playerInfo } from '../pages/games/[gameID]';
 
@@ -18,8 +18,8 @@ export type TSelection = {
   move: TMove,
 }
 
-export default function Board({ transitionToID, currentID, _onSelectNariFunari }
-  : { transitionToID: (id: string) => boolean, currentID: string, _onSelectNariFunari: (move: TMove, callback: (move: TMove) => void) => void }) {
+export default function Board({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID, _onSelectNariFunari }
+  : Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID" | "_onSelectNariFunari">) {
   const initialSelection = {
     selected: false,
     movementChecked: false,
@@ -48,16 +48,14 @@ export default function Board({ transitionToID, currentID, _onSelectNariFunari }
           move.natta = false;
           move.after.piece = move.before.piece
           setSelection(initialSelection);
-          if (!handleNewMove(move)) throw new Error("Can't handle new move!");
-          transitionToID(move.id);
+          handleNewMoveAndChangeCurrentID(move)
           return;
 
         case 2:
           move.captured = getCapturedPiece(move);
-          _onSelectNariFunari(move, (_move) => {
+          _onSelectNariFunari(move, async (_move) => {
             setSelection(initialSelection);
-            if (!handleNewMove(move)) throw new Error("Can't handle new move!");
-            transitionToID(move.id);
+            handleNewMoveAndChangeCurrentID(move)
           });
           return;
         case 3:
@@ -65,8 +63,7 @@ export default function Board({ transitionToID, currentID, _onSelectNariFunari }
           move.natta = true;
           move.after.piece = getNariPiece(move.before.piece as TPieceFace);
           setSelection(initialSelection);
-          if (!handleNewMove(move)) throw new Error("Can't handle new move!");
-          transitionToID(move.id);
+          handleNewMoveAndChangeCurrentID(move)
           return;
 
         default:

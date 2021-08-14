@@ -9,12 +9,12 @@ import Board from '../components/Board'
 import TurnCounter from './TurnCounter'
 import { BackButton, BackToStartButton, ExportKifuButton, ForwardButton, GoToLatestButton } from './OperationButtons'
 import { useCallback, useState } from 'react'
-import { TMove, TPieceFace } from '../types/types'
-import { getNariPiece, makeNewMove, ordinal } from '../func/GameFunctions'
+import { TMessage, TMove, TPieceFace, TState } from '../types/types'
+import { getNariPiece, handleNewMove, makeNewMove, ordinal } from '../func/GameFunctions'
 import { moves, playerInfo } from '../pages/games/[gameID]'
-import Information, { TInfomation } from './Information'
+import Information, { TInformation } from './Information'
 
-export default function Game({ transitionToID, currentID }: { transitionToID: (id: string) => boolean, currentID: string }) {
+export default function Game({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID }: Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID">) {
   const [selectionNariFunari, setSelectionNariFunari] = useState<{
     isSelecting: boolean,
     move?: TMove,
@@ -24,7 +24,7 @@ export default function Game({ transitionToID, currentID }: { transitionToID: (i
   const [isEnteringName, setIsEnteringName] = useState(true);
   const [nameValue, setNameValue] = useState("");
 
-  const [infomation, setInfomation] = useState<TInfomation | undefined>(undefined);
+  const [information, setInformation] = useState<TInformation | undefined>(undefined);
 
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -64,24 +64,24 @@ export default function Game({ transitionToID, currentID }: { transitionToID: (i
       <header className={cn(styles.header, styles.header_footer)}>
         <div className={styles.wrap}>
           <div className={styles.header_footer_main}>
-            <BackToStartButton setInfomation={setInfomation} transitionToID={transitionToID} currentID={currentID} />
-            <BackButton setInfomation={setInfomation} transitionToID={transitionToID} currentID={currentID}></BackButton>
+            <BackToStartButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
+            <BackButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
             <TurnCounter currentID={currentID}></TurnCounter>
-            <ForwardButton setInfomation={setInfomation} transitionToID={transitionToID} currentID={currentID} />
-            <GoToLatestButton setInfomation={setInfomation} transitionToID={transitionToID} currentID={currentID} />
+            <ForwardButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
+            <GoToLatestButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
           </div>
         </div>
-        <Information temporaryInfomation={infomation} currentID={currentID} />
+        <Information temporaryInformation={information} currentID={currentID} />
       </header>
 
       <main className={cn(styles.main, styles.wrap)}>
-        <Board transitionToID={transitionToID} currentID={currentID} _onSelectNariFunari={_onSelectNariFunari} />
+        <Board changeCurrentID={changeCurrentID} currentID={currentID} _onSelectNariFunari={_onSelectNariFunari} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} />
       </main>
 
       <footer className={cn(styles.footer, styles.header_footer)}>
         <div className={styles.wrap}>
           <div className={styles.header_footer_main}>
-            <ExportKifuButton setInfomation={setInfomation} currentID={currentID} />
+            <ExportKifuButton setInformation={setInformation} currentID={currentID} />
             <div className={styles.operation_button}><Icon icon={faLightbulb} /></div>
             <Select className={styles.select} options={options} menuPlacement="top" isSearchable={false}></Select>
           </div>

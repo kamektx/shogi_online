@@ -362,8 +362,8 @@ export const makeNewBoardState = (move: TMove) => {
   return state;
 }
 
-export const handleNewMove = (move: TMove): boolean => {
-  if (move.count == 1) return true;
+export const checkNewMove = (move: TMove): boolean => {
+  if (move.count === 1) return true;
   if (!boardStates.has(move.back)) return false;
 
   let moverCapturedPieces = boardStates.get(move.back)!.senteCapturedPieces;
@@ -381,6 +381,12 @@ export const handleNewMove = (move: TMove): boolean => {
   if (!canMovePiece(move)) return false;
   if (!isNariOK(move)) return false;
   if (move.captured !== getCapturedPiece(move)) return false;
+  return true;
+}
+
+export const handleNewMove = (move: TMove): boolean => {
+  if (move.count === 1) return true;
+  if (!checkNewMove(move)) return false;
 
   moves.set(move.id, move);
 

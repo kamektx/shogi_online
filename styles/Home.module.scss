@@ -21,6 +21,8 @@ $b1-font-size: math.div($max-width-font-size, $max-width) * 100vw;
 .container {
   min-height: 100vh;
   height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -66,7 +68,7 @@ $b1-font-size: math.div($max-width-font-size, $max-width) * 100vw;
     }
   }
 
-  .infomation {
+  .information {
     color: #1864dd;
     font-size: 14px;
     padding-bottom: 4px;
@@ -319,8 +321,8 @@ $b1-font-size: math.div($max-width-font-size, $max-width) * 100vw;
 .popup {
   min-height: 100vh;
   height: 100vh;
-  min-width: 100vh;
-  width: 100vh;
+  min-width: 100vw;
+  width: 100vw;
   position: fixed;
   z-index: 2000;
 
