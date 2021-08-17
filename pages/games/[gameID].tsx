@@ -8,6 +8,7 @@ import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { createID, handleNewMove } from '../../func/GameFunctions'
+import { url } from '../../func/url'
 
 export const gameProperty = {
   csaVersion: "V2.2",
@@ -80,6 +81,16 @@ export const boardStates = new Map<string, TBoardState>().set("START", initialBo
 
 export const messageIDs: string[] = ["FIRST"];
 
+export let moveSound: HTMLAudioElement;
+if (process.browser) {
+  moveSound = new Audio(url("/move.mp3"));
+}
+export let selectSound: HTMLAudioElement;
+if (process.browser) {
+  selectSound = new Audio(url("/select.mp3"));
+  selectSound.volume = 0.1;
+}
+
 export default function Home() {
   const router = useRouter();
   const [currentID, setCurrentID] = useState("START")
@@ -88,7 +99,7 @@ export default function Home() {
   const [socketID, setSocketID] = useState("");
   const [temporaryInformation, setTemporaryInformation] = useState<TInformation | undefined>(undefined);
 
-  const parseMessage = (message: TMessage) => {
+  const parseMessage = (message: TMessage, isFromRequestAllMessages = false) => {
     if (message.lastMessageID !== messageIDs[messageIDs.length - 1]) throw new Error("There is messages that this browser haven't received.");
     messageIDs.push(message.messageID);
     for (const data of message.data) {
@@ -97,7 +108,7 @@ export default function Home() {
           if (!handleNewMove(data.move!)) console.error("handleMove() in parseMessage() failed.");
           break;
         case "changeCurrentID":
-          SetCurrentIDAndSetCurrentInformationWithoutSending(data.currentID!, data.commandOfChangeCurrentID!, message.name);
+          SetCurrentIDAndSetCurrentInformationWithoutSending(data.currentID!, data.commandOfChangeCurrentID!, message.name, isFromRequestAllMessages);
           break;
         default:
           break;
@@ -152,7 +163,7 @@ export default function Home() {
     messageIDs.push("FIRST");
     try {
       for (const message of allMessages) {
-        parseMessage(message);
+        parseMessage(message, true);
       }
     } catch (e) {
       console.error("requestAllMessages(): " + e.message);
@@ -208,8 +219,22 @@ export default function Home() {
     requestAllMessages();
   }, [socketID]);
 
-  const SetCurrentIDAndSetCurrentInformationWithoutSending = (id: string, command: TCommandOfChangeCurrentID, name: string) => {
+  const SetCurrentIDAndSetCurrentInformationWithoutSending = (id: string, command: TCommandOfChangeCurrentID, name: string, isFromRequestAllMessages = false) => {
     setCurrentID(id);
+    switch (command) {
+      case "newMove":
+        if (isFromRequestAllMessages) break;
+        moveSound.pause();
+        moveSound.currentTime = 0;
+        moveSound.play();
+        break;
+      default:
+        if (isFromRequestAllMessages) break;
+        selectSound.pause();
+        selectSound.currentTime = 0;
+        selectSound.play();
+        break;
+    }
     switch (command) {
       case "newMove":
         break;

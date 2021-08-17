@@ -8,6 +8,7 @@ import WinLose from './WinLose';
 import { TMessage, TMove, TPieceFace, TPieceIncludeNull, TState } from '../types/types';
 import { canMovePiece, canSelectMovingPiece, getCapturedPiece, getNariPiece, handleNewMove, makeNewMove } from '../func/GameFunctions';
 import { playerInfo } from '../pages/games/[gameID]';
+import { useEffect } from 'react';
 
 export type TSelection = {
   selected: boolean,
@@ -26,9 +27,13 @@ export default function Board({ changeCurrentID, currentID, handleNewMoveAndChan
     selectedRow: 0,
     selectedColumn: 0,
     selectedPiece: "",
-    move: makeNewMove(currentID, 0, 0, "", playerInfo.name),
+    move: makeNewMove(currentID, 0, 0, "", "default"),
   } as TSelection;
   const [selection, setSelection] = useState<TSelection>(initialSelection);
+
+  useEffect(() => {
+    setSelection(initialSelection);
+  }, [currentID])
 
   const _onSquareClick = (row: number, column: number, pieceName: TPieceIncludeNull) => {
     if (selection.selected) {
