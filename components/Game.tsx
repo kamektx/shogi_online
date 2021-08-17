@@ -7,14 +7,14 @@ import Select from 'react-select'
 import MyHead from '../components/MyHead'
 import Board from '../components/Board'
 import TurnCounter from './TurnCounter'
+import Information from './Information'
 import { BackButton, BackToStartButton, ExportKifuButton, ForwardButton, GoToLatestButton } from './OperationButtons'
 import { useCallback, useState } from 'react'
 import { TMessage, TMove, TPieceFace, TState } from '../types/types'
 import { getNariPiece, handleNewMove, makeNewMove, ordinal } from '../func/GameFunctions'
 import { moves, playerInfo } from '../pages/games/[gameID]'
-import Information, { TInformation } from './Information'
 
-export default function Game({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID }: Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID">) {
+export default function Game({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID, setTemporaryInformation, temporaryInformation }: Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID" | "setTemporaryInformation" | "temporaryInformation">) {
   const [selectionNariFunari, setSelectionNariFunari] = useState<{
     isSelecting: boolean,
     move?: TMove,
@@ -23,8 +23,6 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
 
   const [isEnteringName, setIsEnteringName] = useState(true);
   const [nameValue, setNameValue] = useState("");
-
-  const [information, setInformation] = useState<TInformation | undefined>(undefined);
 
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -64,14 +62,14 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
       <header className={cn(styles.header, styles.header_footer)}>
         <div className={styles.wrap}>
           <div className={styles.header_footer_main}>
-            <BackToStartButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
-            <BackButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
+            <BackToStartButton changeCurrentID={changeCurrentID} currentID={currentID} />
+            <BackButton changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
             <TurnCounter currentID={currentID}></TurnCounter>
-            <ForwardButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
-            <GoToLatestButton setInformation={setInformation} changeCurrentID={changeCurrentID} currentID={currentID} />
+            <ForwardButton changeCurrentID={changeCurrentID} currentID={currentID} />
+            <GoToLatestButton changeCurrentID={changeCurrentID} currentID={currentID} />
           </div>
         </div>
-        <Information temporaryInformation={information} currentID={currentID} />
+        <Information temporaryInformation={temporaryInformation} currentID={currentID} />
       </header>
 
       <main className={cn(styles.main, styles.wrap)}>
@@ -81,7 +79,7 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
       <footer className={cn(styles.footer, styles.header_footer)}>
         <div className={styles.wrap}>
           <div className={styles.header_footer_main}>
-            <ExportKifuButton setInformation={setInformation} currentID={currentID} />
+            <ExportKifuButton setTemporaryInformation={setTemporaryInformation} currentID={currentID} />
             <div className={styles.operation_button}><Icon icon={faLightbulb} /></div>
             <Select className={styles.select} options={options} menuPlacement="top" isSearchable={false}></Select>
           </div>

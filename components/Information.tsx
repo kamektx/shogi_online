@@ -3,12 +3,7 @@ import cn from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 import { ordinal } from '../func/GameFunctions'
 import { moves } from '../pages/games/[gameID]'
-
-export type TInformation = {
-  text: string,
-  color?: string,
-  ms: number
-}
+import { TInformation } from '../types/types'
 
 let prevTemporaryInformation: TInformation | undefined = undefined;
 
@@ -19,7 +14,7 @@ export default function Information({ temporaryInformation, currentID }: { tempo
     ms: 0,
   } as TInformation;
 
-  const [information, setInformation] = useState(initialInformation);
+  const [information, setInformation] = useState<TInformation>(initialInformation);
 
   useEffect(() => {
     const defaultInformation = {

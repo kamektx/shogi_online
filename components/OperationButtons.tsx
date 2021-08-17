@@ -6,7 +6,6 @@ import { faChevronLeft, faChevronRight, faStepBackward, faStepForward } from '@f
 import React, { SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { TInformation } from './Information';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { getCSAPieceName } from '../func/GameFunctions';
 import { TPieceAll, TState } from '../types/types';
@@ -19,11 +18,10 @@ export function OperationButton({ className, style, icon, _onClick }: { classNam
   )
 }
 
-export function BackToStartButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
+export function BackToStartButton({ changeCurrentID, currentID }: Pick<TState, "changeCurrentID" | "currentID">) {
   const _onClick = () => {
     if (currentID !== "START") {
-      changeCurrentID("START");
-      setInformation({ text: playerInfo.name + " has put the phase back to the first.", ms: 3000 })
+      changeCurrentID("START", "start");
     }
   }
   return (
@@ -33,12 +31,11 @@ export function BackToStartButton({ changeCurrentID, currentID, setInformation }
   )
 }
 
-export function BackButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
+export function BackButton({ changeCurrentID, currentID }: Pick<TState, "changeCurrentID" | "currentID">) {
   const _onClick = () => {
     if (currentID !== "START") {
       const backID = moves.get(currentID)!.back;
-      changeCurrentID(backID);
-      setInformation({ text: playerInfo.name + " has put the phase back to the previous.", ms: 3000 })
+      changeCurrentID(backID, "back");
     }
   }
   return (
@@ -48,13 +45,12 @@ export function BackButton({ changeCurrentID, currentID, setInformation }: Pick<
   )
 }
 
-export function ForwardButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
+export function ForwardButton({ changeCurrentID, currentID }: Pick<TState, "changeCurrentID" | "currentID">) {
   const forwardIDs = moves.get(currentID)!.forward;
   const isDisabled = forwardIDs.length === 0;
   const _onClick = () => {
     if (isDisabled) return;
-    changeCurrentID(forwardIDs[0]);
-    setInformation({ text: playerInfo.name + " has moved the phase to the next.", ms: 3000 })
+    changeCurrentID(forwardIDs[0], "forward");
   }
   return (
     <OperationButton icon={faChevronRight} _onClick={_onClick} className={cn({
@@ -63,7 +59,7 @@ export function ForwardButton({ changeCurrentID, currentID, setInformation }: Pi
   )
 }
 
-export function GoToLatestButton({ changeCurrentID, currentID, setInformation }: Pick<TState, "changeCurrentID" | "currentID" | "setInformation">) {
+export function GoToLatestButton({ changeCurrentID, currentID }: Pick<TState, "changeCurrentID" | "currentID">) {
   let currentMove = moves.get(currentID)!;
   let forwardIDs = currentMove.forward;
   const isDisabled = forwardIDs.length === 0;
@@ -73,8 +69,7 @@ export function GoToLatestButton({ changeCurrentID, currentID, setInformation }:
       currentMove = moves.get(currentMove.forward[0])!;
       forwardIDs = currentMove.forward;
     }
-    changeCurrentID(currentMove.id);
-    setInformation({ text: playerInfo.name + " has moved the phase to the latest.", ms: 3000 });
+    changeCurrentID(currentMove.id, "latest");
   }
   return (
     <OperationButton icon={faStepForward} _onClick={_onClick} className={cn({
@@ -83,7 +78,7 @@ export function GoToLatestButton({ changeCurrentID, currentID, setInformation }:
   )
 }
 
-export function ExportKifuButton({ setInformation, currentID }: Pick<TState, "currentID" | "setInformation">) {
+export function ExportKifuButton({ setTemporaryInformation, currentID }: Pick<TState, "currentID" | "setTemporaryInformation">) {
   const _onClick = () => {
     let str = "";
     str += gameProperty.csaVersion + "\n";
@@ -109,7 +104,7 @@ export function ExportKifuButton({ setInformation, currentID }: Pick<TState, "cu
       navigator.clipboard.writeText(str);
     }
 
-    setInformation({
+    setTemporaryInformation({
       text: "Exported the Kifu (CSA Format) to the clipbord.",
       color: "#2d8c0d",
       ms: 3000

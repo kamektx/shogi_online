@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { NextApiResponseServerIO, TAllMessages, TMessage, TNextApi } from '../../types/types'
+import { NextApiResponseServerIO, TAllMessages, TMessage, TApi } from '../../types/types'
 import { MongoClient, SortDirection } from 'mongodb';
 
 const MyNextApi = async (
   req: NextApiRequest,
   res: NextApiResponseServerIO
 ) => {
-  const posted = req.body as TNextApi;
+  const posted = req.body as TApi;
   const cliant = new MongoClient(process.env.MONGODB_URI!);
   try {
     const db = (await cliant.connect()).db("shogi");

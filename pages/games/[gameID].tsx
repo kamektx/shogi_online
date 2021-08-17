@@ -3,7 +3,7 @@ import cn from 'classnames'
 import Game from '../../components/Game'
 import MyHead from '../../components/MyHead'
 import { useState } from 'react'
-import { TMove, TBoardState, TPieceFace, TPieceAll, TMessage, TAllMessages, TNextApi } from '../../types/types'
+import { TMove, TBoardState, TPieceFace, TPieceAll, TMessage, TAllMessages, TApi, TInformation, TCommandOfChangeCurrentID } from '../../types/types'
 import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
@@ -86,6 +86,7 @@ export default function Home() {
   const [mode, setMode] = useState<("main" | "makeDraft" | "playDraft")>("main");
   const [gameID, setGameID] = useState("");
   const [socketID, setSocketID] = useState("");
+  const [temporaryInformation, setTemporaryInformation] = useState<TInformation | undefined>(undefined);
 
   const parseMessage = (message: TMessage) => {
     if (message.lastMessageID !== messageIDs[messageIDs.length - 1]) throw new Error("There is messages that this browser haven't received.");
@@ -96,7 +97,7 @@ export default function Home() {
           if (!handleNewMove(data.move!)) console.error("handleMove() in parseMessage() failed.");
           break;
         case "changeCurrentID":
-          setCurrentID(data.currentID!);
+          SetCurrentIDAndSetCurrentInformationWithoutSending(data.currentID!, data.commandOfChangeCurrentID!, message.name);
           break;
         default:
           break;
@@ -106,7 +107,7 @@ export default function Home() {
 
   const sendMessage = async (message: TMessage): Promise<boolean> => {
     messageIDs.push(message.messageID);
-    const res = await fetch("/api/nextApi", {
+    const res = await fetch("https://api.techchair.net/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -116,13 +117,12 @@ export default function Home() {
         gameID: gameID,
         socketID: socketID,
         message: message,
-      } as TNextApi),
+      } as TApi),
     });
     if (!res.ok) throw new Error("sendMessage api failed.");
     const data = await res.json();
     if (!data.isMessageOK) {
-      console.log(data.error)
-      console.log(data.result)
+      console.log(data.error);
       requestAllMessages();
       return false;
     }
@@ -130,7 +130,7 @@ export default function Home() {
   }
 
   const requestAllMessages = async () => {
-    const res = await fetch("/api/nextApi", {
+    const res = await fetch("https://api.techchair.net/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function Home() {
         command: "requestAllMessages",
         gameID: gameID,
         socketID: socketID,
-      } as TNextApi),
+      } as TApi),
     });
     if (!res.ok) throw new Error("requestAllMessages api failed.");
     const allMessages = await res.json() as TAllMessages;
@@ -170,9 +170,9 @@ export default function Home() {
     }
 
 
-    const socket = io(process.env.BASE_URL as string, {
+    const socket = io("https://api.techchair.net", {
       // transports: ["websocket"],
-      path: "/api/socket",
+      path: "/shogi/socket",
       query: {
         gameID: myGameID,
 
@@ -208,16 +208,39 @@ export default function Home() {
     requestAllMessages();
   }, [socketID]);
 
-  const changeCurrentID = async (id: string): Promise<boolean> => {
-    if (!boardStates.has(id) || !moves.has(id)) return false;
+  const SetCurrentIDAndSetCurrentInformationWithoutSending = (id: string, command: TCommandOfChangeCurrentID, name: string) => {
     setCurrentID(id);
+    switch (command) {
+      case "newMove":
+        break;
+      case "start":
+        setTemporaryInformation({ text: name + " has put the phase back to the first.", ms: 3000 });
+        break;
+      case "back":
+        setTemporaryInformation({ text: name + " has put the phase back to the previous.", ms: 3000 });
+        break;
+      case "forward":
+        setTemporaryInformation({ text: name + " has moved the phase to the next.", ms: 3000 });
+        break;
+      case "latest":
+        setTemporaryInformation({ text: name + " has moved the phase to the latest.", ms: 3000 });
+        break;
+    }
+  }
+
+  const changeCurrentID = async (id: string, command: TCommandOfChangeCurrentID): Promise<boolean> => {
+    if (!boardStates.has(id) || !moves.has(id)) return false;
+    SetCurrentIDAndSetCurrentInformationWithoutSending(id, command, playerInfo.name);
     const message: TMessage = {
+      gameID: gameID,
       messageID: createID(),
       lastMessageID: messageIDs[messageIDs.length - 1],
+      name: playerInfo.name,
       data: [
         {
           command: "changeCurrentID",
           currentID: id,
+          commandOfChangeCurrentID: command,
         }
       ]
     }
@@ -229,10 +252,12 @@ export default function Home() {
 
   const handleNewMoveAndChangeCurrentID = async (move: TMove): Promise<boolean> => {
     if (!handleNewMove(move)) return false;
-    setCurrentID(move.id);
+    SetCurrentIDAndSetCurrentInformationWithoutSending(move.id, "newMove", playerInfo.name);
     const message: TMessage = {
+      gameID: gameID,
       messageID: createID(),
       lastMessageID: messageIDs[messageIDs.length - 1],
+      name: playerInfo.name,
       data: [
         {
           command: "newMove",
@@ -241,6 +266,7 @@ export default function Home() {
         {
           command: "changeCurrentID",
           currentID: move.id,
+          commandOfChangeCurrentID: "newMove",
         }
       ]
     }
@@ -253,7 +279,7 @@ export default function Home() {
   return (
     <>
       <MyHead />
-      <Game changeCurrentID={changeCurrentID} currentID={currentID} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} />
+      <Game changeCurrentID={changeCurrentID} currentID={currentID} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} setTemporaryInformation={setTemporaryInformation} temporaryInformation={temporaryInformation} />
     </>
   )
 }

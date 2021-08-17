@@ -1,7 +1,6 @@
 import { Server as NetServer, Socket as NetSocket } from "net";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
-import { TInformation } from "../components/Information";
 
 export type NextApiResponseServerIO = NextApiResponse & {
   socket: NetSocket & {
@@ -52,32 +51,44 @@ export type TMove = {
   draft: string[], // move ID, forward[0] is newest move.
 }
 
+export type TCommandOfChangeCurrentID = ("newMove" | "start" | "back" | "forward" | "latest")
+
 export type TMessageData = {
   command: ("newMove" | "changeCurrentID"),
   move?: TMove,
   currentID?: string,
+  commandOfChangeCurrentID?: TCommandOfChangeCurrentID,
 }
 
 export type TMessage = {
+  gameID: string,
   lastMessageID: string,
   messageID: string,
+  name: string,
   data: TMessageData[],
 }
 
 export type TAllMessages = TMessage[]
 
-export type TNextApi = {
+export type TApi = {
   command: ("sendMessage" | "requestAllMessages"),
   gameID: string,
   socketID: string,
   message?: TMessage,
 }
 
+export type TInformation = {
+  text: string,
+  color?: string,
+  ms: number
+}
+
 export type TState = {
   currentID: string,
-  changeCurrentID: (id: string) => Promise<boolean>,
+  changeCurrentID: (id: string, command: TCommandOfChangeCurrentID) => Promise<boolean>,
   sendMessage: (message: TMessage) => Promise<boolean>,
   handleNewMoveAndChangeCurrentID: (move: TMove) => Promise<boolean>,
   _onSelectNariFunari: (move: TMove, callback: (move: TMove) => void) => void,
-  setInformation: (value: TInformation) => void
+  setTemporaryInformation: (value: TInformation) => void,
+  temporaryInformation: TInformation | undefined,
 }
