@@ -52,7 +52,7 @@ export default function Square({ column, row, currentID, _onSquareClick, selecti
   })} />;
 
   return (
-    <td onClick={_onClick} className={cn(styles.board_square, styles.square, {
+    <td onPointerDown={_onClick} className={cn(styles.board_square, styles.square, {
       [styles.gote]: isGote,
       [styles.pointer]: canClick,
       [styles.red]: selection.selectedRow === row && selection.selectedColumn === column,

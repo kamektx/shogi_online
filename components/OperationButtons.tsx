@@ -12,7 +12,7 @@ import { TPieceAll, TState } from '../types/types';
 
 export function OperationButton({ className, style, icon, _onClick }: { className?: string, style?: React.CSSProperties, icon: IconProp, _onClick: () => void }) {
   return (
-    <div className={cn(styles.operation_button, className)} onClick={_onClick}>
+    <div className={cn(styles.operation_button, className)} onPointerDown={_onClick}>
       <FontAwesomeIcon icon={icon} style={style} />
     </div>
   )
