@@ -1,4 +1,9 @@
+const urlPrefix = "/shogi"
+
 module.exports = {
   reactStrictMode: true,
-  basePath: '/shogi',
+  assetPrefix: urlPrefix,
+  basePath: urlPrefix,
+  trailingSlash: true,
+  publicRuntimeConfig: { urlPrefix },  // ★コレ
 }
