@@ -91,8 +91,8 @@ export function ExportKifuButton({ setTemporaryInformation, currentID }: Pick<TS
     while (currentMove.id !== "START") {
       arr.unshift("");
       arr[0] += currentMove.count % 2 === 0 ? "+" : "-";
-      arr[0] += "" + currentMove.before.column + currentMove.before.row;
-      arr[0] += "" + currentMove.after.column + currentMove.after.row;
+      arr[0] += "" + (currentMove.before.column % 100) + (currentMove.before.row % 100);
+      arr[0] += "" + (currentMove.after.column % 100) + (currentMove.after.row % 100);
       arr[0] += getCSAPieceName(currentMove.after.piece as TPieceAll);
       arr[0] += "\n";
       currentMove = moves.get(currentMove.back)!;
