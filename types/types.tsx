@@ -33,6 +33,7 @@ export type TMove = {
   count: number,
   id: string,
   name: string,
+  time: string,
   before: {
     row: number, // START: 0, senteStand: 100, goteStand: 200
     column: number, // START: 0, senteStand: 100, goteStand: 200

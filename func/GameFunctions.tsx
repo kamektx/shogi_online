@@ -310,6 +310,7 @@ export const makeNewMove = (currentID: string, beforeRow: number, beforeColumn: 
     count: boardStates.get(currentID)!.count + 1,
     id: createID()!,
     name: name2,
+    time: "",
     before: {
       row: beforeRow, // START: 0, senteStand: 100, goteStand: 200
       column: beforeColumn, // START: 0, senteStand: 100, goteStand: 200

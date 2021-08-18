@@ -57,6 +57,7 @@ export const firstMove = {
   count: 1,
   id: "START",
   name: "System",
+  time: "",
   before: {
     row: 0,
     column: 0,
@@ -276,6 +277,8 @@ export default function Home() {
   }
 
   const handleNewMoveAndChangeCurrentID = async (move: TMove): Promise<boolean> => {
+    const date = new Date();
+    move.time = "" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     if (!handleNewMove(move)) return false;
     SetCurrentIDAndSetCurrentInformationWithoutSending(move.id, "newMove", playerInfo.name);
     const message: TMessage = {

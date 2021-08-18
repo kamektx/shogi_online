@@ -69,6 +69,9 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
             <GoToLatestButton changeCurrentID={changeCurrentID} currentID={currentID} />
           </div>
         </div>
+        <div className={styles.wrap}>
+          <div className={cn(styles.menu_popup)}></div>
+        </div>
         <Information temporaryInformation={temporaryInformation} currentID={currentID} />
       </header>
 
@@ -77,6 +80,9 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
       </main>
 
       <footer className={cn(styles.footer, styles.header_footer)}>
+        <div className={styles.wrap}>
+          <div className={cn(styles.menu_popup)}></div>
+        </div>
         <div className={styles.wrap}>
           <div className={styles.header_footer_main}>
             <ExportKifuButton setTemporaryInformation={setTemporaryInformation} currentID={currentID} />
