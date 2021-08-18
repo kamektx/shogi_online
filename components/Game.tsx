@@ -57,40 +57,41 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
   }
 
   return (
-    <div className={styles.container}>
-
-      <header className={cn(styles.header, styles.header_footer)}>
-        <div className={styles.wrap}>
-          <div className={styles.header_footer_main}>
-            <BackToStartButton changeCurrentID={changeCurrentID} currentID={currentID} />
-            <BackButton changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
-            <TurnCounter currentID={currentID}></TurnCounter>
-            <ForwardButton changeCurrentID={changeCurrentID} currentID={currentID} />
-            <GoToLatestButton changeCurrentID={changeCurrentID} currentID={currentID} />
+    <>
+      <div className={styles.container}>
+        <header className={cn(styles.header, styles.header_footer)}>
+          <div className={styles.wrap}>
+            <div className={styles.header_footer_main}>
+              <BackToStartButton changeCurrentID={changeCurrentID} currentID={currentID} />
+              <BackButton changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
+              <TurnCounter currentID={currentID}></TurnCounter>
+              <ForwardButton changeCurrentID={changeCurrentID} currentID={currentID} />
+              <GoToLatestButton changeCurrentID={changeCurrentID} currentID={currentID} />
+            </div>
           </div>
-        </div>
-        <div className={styles.menu_wrap}>
-          <div className={cn(styles.menu_popup)}></div>
-        </div>
-        <Information temporaryInformation={temporaryInformation} currentID={currentID} />
-      </header>
-
-      <main className={cn(styles.main, styles.wrap)}>
-        <Board changeCurrentID={changeCurrentID} currentID={currentID} _onSelectNariFunari={_onSelectNariFunari} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} />
-      </main>
-
-      <footer className={cn(styles.footer, styles.header_footer)}>
-        <div className={styles.menu_wrap}>
-          <div className={cn(styles.menu_popup)}></div>
-        </div>
-        <div className={styles.wrap}>
-          <div className={styles.header_footer_main}>
-            <ExportKifuButton setTemporaryInformation={setTemporaryInformation} currentID={currentID} />
-            <div className={styles.operation_button}><Icon icon={faLightbulb} /></div>
-            <Select className={styles.select} options={options} menuPlacement="top" isSearchable={false}></Select>
+          <div className={styles.menu_wrap}>
+            <div className={cn(styles.menu_popup)}></div>
           </div>
-        </div>
-      </footer>
+          <Information temporaryInformation={temporaryInformation} currentID={currentID} />
+        </header>
+
+        <main className={cn(styles.main, styles.wrap)}>
+          <Board changeCurrentID={changeCurrentID} currentID={currentID} _onSelectNariFunari={_onSelectNariFunari} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} />
+        </main>
+
+        <footer className={cn(styles.footer, styles.header_footer)}>
+          <div className={styles.menu_wrap}>
+            <div className={cn(styles.menu_popup)}></div>
+          </div>
+          <div className={styles.wrap}>
+            <div className={styles.header_footer_main}>
+              <ExportKifuButton setTemporaryInformation={setTemporaryInformation} currentID={currentID} />
+              <div className={styles.operation_button}><Icon icon={faLightbulb} /></div>
+              <Select className={styles.select} options={options} menuPlacement="top" isSearchable={false}></Select>
+            </div>
+          </div>
+        </footer>
+      </div >
       <div className={cn(styles.nari_funari_popup, styles.popup, {
         [styles.disabled]: !selectionNariFunari.isSelecting,
       })}>
@@ -128,6 +129,6 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
           </div>
         </div>
       </div>
-    </div >
+    </>
   )
 }

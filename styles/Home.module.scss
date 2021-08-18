@@ -368,6 +368,12 @@ $popup_color: #222;
   width: 100vw;
   position: fixed;
   z-index: 2000;
+  top: 0;
+  left: 0;
+
+  &.disabled {
+    display: none;
+  }
 
   .button {
     background-color: rgba(255, 255, 255, 0.8);
@@ -389,10 +395,6 @@ $popup_color: #222;
   justify-content: center;
   align-items: center;
 
-  &.disabled {
-    visibility: hidden;
-  }
-
   .wrap {
     display: flex;
     flex-direction: row;
@@ -400,7 +402,7 @@ $popup_color: #222;
     align-items: center;
 
     .nari_funari_button {
-      width: 180px;
+      flex: 0 0 180px;
       height: 120px;
       border-radius: 20px;
       font-size: $max-width-font-size;
@@ -439,10 +441,6 @@ $popup_color: #222;
   align-items: center;
   font-size: 16px;
 
-  &.disabled {
-    visibility: hidden;
-  }
-
   .wrap {
     display: flex;
     flex-direction: column;
@@ -460,7 +458,6 @@ $popup_color: #222;
     .name_field {
       width: 300px;
       height: 36px;
-      box-sizing: content-box;
       font-size: 1em;
       border-radius: $border-radius;
       background-color: #fff;
@@ -495,10 +492,6 @@ $popup_color: #222;
   justify-content: center;
   align-items: center;
   font-size: 16px;
-
-  &.disabled {
-    visibility: hidden;
-  }
 
   .wrap {
     display: flex;
