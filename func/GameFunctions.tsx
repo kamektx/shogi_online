@@ -167,8 +167,8 @@ export const canMovePiece = (move: TMove): number => {
           if (opponentBoard[move.before.row + Math.sign(move.after.row - move.before.row) * i][move.before.column + Math.sign(move.after.column - move.before.column) * i] !== "") return 0;
         }
         if (move.before.piece === "馬") return 1;
-        else if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
-
+        if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
+        if (move.before.row - 3 * flip < 1 || move.before.row - 3 * flip > 9) return 2;
         return 1;
 
       case "龍":
@@ -181,7 +181,8 @@ export const canMovePiece = (move: TMove): number => {
           if (opponentBoard[move.before.row + Math.sign(move.after.row - move.before.row) * i][move.before.column + Math.sign(move.after.column - move.before.column) * i] !== "") return 0;
         }
         if (move.before.piece === "龍") return 1;
-        else if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
+        if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
+        if (move.before.row - 3 * flip < 1 || move.before.row - 3 * flip > 9) return 2;
 
         return 1;
 
@@ -203,6 +204,7 @@ export const canMovePiece = (move: TMove): number => {
             return 1;
           default:
             if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return 2;
+            if (move.before.row - 3 * flip < 1 || move.before.row - 3 * flip > 9) return 2;
             return 1;
         }
 
@@ -281,7 +283,9 @@ export const isNariOK = (move: TMove): boolean => {
 
   if (move.natta) {
     if (getNariPiece(move.before.piece as TPieceFace) !== move.after.piece) return false;
+    if (move.before.row % 100 === 0) return false;
     if (move.after.row - 3 * flip < 1 || move.after.row - 3 * flip > 9) return true;
+    if (move.before.row - 3 * flip < 1 || move.before.row - 3 * flip > 9) return true;
     return false;
   }
 

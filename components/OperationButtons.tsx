@@ -99,7 +99,7 @@ export function ReverseButton({ isReversed, setIsReversed }: Pick<TState, "isRev
     setIsReversed(isReversed ? false : true);
   }
   return (
-    <OperationButton icon={faSyncAlt} _onClick={_onClick} />
+    <OperationButton icon={faSyncAlt} _onClick={_onClick} style={{ fontSize: "90%" }} />
   )
 }
 
