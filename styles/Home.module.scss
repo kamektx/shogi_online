@@ -202,6 +202,10 @@ $popup_color: #222;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+
+  &.reversed {
+    transform: rotate(180deg);
+  }
 }
 
 .pointer {

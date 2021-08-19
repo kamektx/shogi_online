@@ -7,7 +7,7 @@ import Board from '../components/Board'
 import TurnCounter from './TurnCounter'
 import Information from './Information'
 import ForwardMenu from './ForwardMenu'
-import { BackButton, BackToStartButton, ExportKifuButton, ForwardButton, GoToLatestButton } from './OperationButtons'
+import { BackButton, BackToStartButton, ExportKifuButton, ForwardButton, GoToLatestButton, ReverseButton } from './OperationButtons'
 import { useCallback, useState } from 'react'
 import { TMessage, TMove, TPieceFace, TState } from '../types/types'
 import { getNariPiece, handleNewMove, makeNewMove, ordinal } from '../func/GameFunctions'
@@ -23,6 +23,7 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
   const [isEnteringName, setIsEnteringName] = useState(true);
   const [nameValue, setNameValue] = useState("");
   const [forwardMenuOpened, setForwardMenuOpened] = useState(false);
+  const [isReversed, setIsReversed] = useState(false);
 
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -74,7 +75,9 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
           <Information temporaryInformation={temporaryInformation} currentID={currentID} />
         </header>
 
-        <main className={cn(styles.main, styles.wrap)}>
+        <main className={cn(styles.main, styles.wrap, {
+          [styles.reversed]: isReversed,
+        })}>
           <Board changeCurrentID={changeCurrentID} currentID={currentID} _onSelectNariFunari={_onSelectNariFunari} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} />
         </main>
 
@@ -84,6 +87,7 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
           </div>
           <div className={styles.wrap}>
             <div className={styles.header_footer_main}>
+              <ReverseButton isReversed={isReversed} setIsReversed={setIsReversed} />
               <ExportKifuButton setTemporaryInformation={setTemporaryInformation} currentID={currentID} />
               <div className={styles.operation_button}><Icon icon={faLightbulb} /></div>
               <Select className={styles.select} options={options} menuPlacement="top" isSearchable={false}></Select>

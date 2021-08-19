@@ -94,4 +94,6 @@ export type TState = {
   temporaryInformation: TInformation | undefined,
   forwardMenuOpened: boolean,
   setForwardMenuOpened: (value: boolean) => void,
+  isReversed: boolean,
+  setIsReversed: (value: boolean) => void,
 }

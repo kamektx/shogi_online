@@ -2,7 +2,7 @@ import styles from '../styles/Home.module.scss'
 import cn from 'classnames'
 import { gameProperty, moves, playerInfo } from '../pages/games/[gameID]'
 import { ClassNameList } from 'react-select';
-import { faChevronLeft, faChevronRight, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faStepBackward, faStepForward, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import React, { SetStateAction } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -91,6 +91,15 @@ export function GoToLatestButton({ changeCurrentID, currentID }: Pick<TState, "c
     <OperationButton icon={faStepForward} _onClick={_onClick} className={cn({
       [styles.disabled]: isDisabled,
     })} />
+  )
+}
+
+export function ReverseButton({ isReversed, setIsReversed }: Pick<TState, "isReversed" | "setIsReversed">) {
+  const _onClick = () => {
+    setIsReversed(isReversed ? false : true);
+  }
+  return (
+    <OperationButton icon={faSyncAlt} _onClick={_onClick} />
   )
 }
 
