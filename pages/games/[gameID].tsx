@@ -245,16 +245,16 @@ export default function Home() {
       case "newMove":
         break;
       case "start":
-        setTemporaryInformation({ text: name + " has put the phase back to the first.", ms: 3000 });
+        setTemporaryInformation({ text: name + " has put the phase back to the first.", ms: 1800 });
         break;
       case "back":
-        setTemporaryInformation({ text: name + " has put the phase back to the previous.", ms: 3000 });
+        setTemporaryInformation({ text: name + " has put the phase back to the previous.", ms: 1800 });
         break;
       case "forward":
-        setTemporaryInformation({ text: name + " has moved the phase to the next.", ms: 3000 });
+        setTemporaryInformation({ text: name + " has moved the phase to the next.", ms: 1800 });
         break;
       case "latest":
-        setTemporaryInformation({ text: name + " has moved the phase to the latest.", ms: 3000 });
+        setTemporaryInformation({ text: name + " has moved the phase to the latest.", ms: 1800 });
         break;
     }
   }
