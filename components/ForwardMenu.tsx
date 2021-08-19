@@ -19,11 +19,11 @@ export default function ForwardMenu({ currentID, forwardMenuOpened, setForwardMe
     setForwardMenuOpened(false);
   }
 
-  const renderMenuItem = (index: number) => {
-    if (index >= currentMove.forward.length) throw new Error('Argument "index" is invalid.');
-    if (!moves.has(currentMove.forward[index])) throw new Error('moves.has(currentMove.forward[index]) returned false.');
-    const targetMove = moves.get(currentMove.forward[index])!;
-    const isBottom = index === currentMove.forward.length - 1;
+  const renderMenuItem = (index: number, forwardArray: string[]) => {
+    if (index >= forwardArray.length) throw new Error('Argument "index" is invalid.');
+    if (!moves.has(forwardArray[index])) throw new Error('moves.has(currentMove.forward[index]) returned false.');
+    const targetMove = moves.get(forwardArray[index])!;
+    const isBottom = index === forwardArray.length - 1;
     return (
       <div key={index} onPointerDown={() => _onPointerDown(index)} className={cn(styles.menu_item, {
         [styles.bottom_item]: isBottom,
@@ -33,8 +33,9 @@ export default function ForwardMenu({ currentID, forwardMenuOpened, setForwardMe
 
   const renderMenuItems = () => {
     const menuItems: JSX.Element[] = [];
-    for (let index = 0; index < currentMove.forward.length; index++) {
-      menuItems.push(renderMenuItem(index));
+    const forwardArray = currentMove.forward;
+    for (let index = 0; index < forwardArray.length; index++) {
+      menuItems.push(renderMenuItem(index, forwardArray));
     }
     return menuItems;
   }
