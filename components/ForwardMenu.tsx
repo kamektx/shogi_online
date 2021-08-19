@@ -27,7 +27,7 @@ export default function ForwardMenu({ currentID, forwardMenuOpened, setForwardMe
     return (
       <div key={index} onPointerDown={() => _onPointerDown(index)} className={cn(styles.menu_item, {
         [styles.bottom_item]: isBottom,
-      })}>{"From " + (targetMove.before.column % 100 === 0 ? "駒台" : columnChar(targetMove.before.column) + rowChar(targetMove.before.row) + targetMove.before.piece) + "  to " + columnChar(targetMove.after.column) + rowChar(targetMove.after.row) + targetMove.after.piece + "  at " + targetMove.time + (targetMove.name == undefined ? "" : "\nby " + targetMove.name)}</div>
+      })}>{"From " + (targetMove.before.column % 100 === 0 ? "駒台" : columnChar(targetMove.before.column) + rowChar(targetMove.before.row) + targetMove.before.piece) + "  to " + columnChar(targetMove.after.column) + rowChar(targetMove.after.row) + targetMove.after.piece + (targetMove.time == undefined ? "" : "  at " + targetMove.time) + "\nby " + targetMove.name}</div>
     )
   }
 
