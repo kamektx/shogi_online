@@ -278,7 +278,7 @@ export default function Home() {
 
   const handleNewMoveAndChangeCurrentID = async (move: TMove): Promise<boolean> => {
     const date = new Date();
-    move.time = "" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    move.time = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0') + ":" + date.getSeconds().toString().padStart(2, '0');
     if (!handleNewMove(move)) return false;
     SetCurrentIDAndSetCurrentInformationWithoutSending(move.id, "newMove", playerInfo.name);
     const message: TMessage = {

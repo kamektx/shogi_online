@@ -403,7 +403,8 @@ export const handleNewMove = (move: TMove): boolean => {
       const index = prevMove.forward.indexOf(currentMove.id);
       if (index === -1) return false;
       if (index !== 0) {
-        prevMove.forward.splice(index, 1).unshift(currentMove.id);
+        prevMove.forward.splice(index, 1);
+        prevMove.forward.unshift(currentMove.id);
       }
     }
   }

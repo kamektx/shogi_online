@@ -34,8 +34,11 @@ $popup_color: #222;
 }
 
 .wrap {
-  max-width: $max-width;
-  width: 100vw;
+  width: $max-width;
+
+  @include b1 {
+    width: 100%;
+  }
 }
 
 .header_footer {
@@ -57,22 +60,45 @@ $popup_color: #222;
   }
 
   .menu_wrap {
-    max-width: $max-width;
-    width: 100vw;
     position: relative;
 
     .menu_popup {
+      display: block;
       $left: 10px;
       position: absolute;
       z-index: 300;
       left: $left;
       width: calc(100% - #{$left} * 2);
-      background-color: $popup_color;
-      border-radius: 4px;
-      height: 100px;
+      border-radius: $border-radius;
+      overflow: hidden;
+
+      &:not(.menu_opened) {
+        display: none;
+      }
+
+      .menu_item {
+        width: 100%;
+        padding: 10px 12px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        border-bottom: 1px solid #bbb;
+        white-space: pre-wrap;
+        text-align: center;
+        background-color: $popup_color;
+        cursor: pointer;
+        transition: background .2s ease-out;
+
+        &.bottom_item {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background-color: #00439C;
+        }
+      }
     }
   }
-
 }
 
 
@@ -81,7 +107,7 @@ $popup_color: #222;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 
   .menu_popup {
-    top: 14px;
+    top: 12px;
   }
 
   .header_footer_main {
@@ -95,9 +121,9 @@ $popup_color: #222;
       font-weight: 500;
     }
 
-    .operation_button.menu_open:after {
+    .operation_button:after {
       content: "▲";
-      bottom: -31px;
+      bottom: -30px;
     }
   }
 
@@ -115,16 +141,16 @@ $popup_color: #222;
   border-top: 1px solid rgba(0, 0, 0, 0.3);
 
   .menu_popup {
-    bottom: 13px;
+    bottom: 11px;
   }
 
   .header_footer_main {
     justify-content: flex-start;
     gap: 16px;
 
-    .operation_button.menu_open:after {
+    .operation_button:after {
       content: "▼";
-      top: -34px;
+      top: -32px;
     }
 
     .select {
@@ -156,12 +182,16 @@ $popup_color: #222;
     background-color: #999;
   }
 
-  &.menu_open:after {
+  &:after {
     display: block;
     position: absolute;
     color: $popup_color;
     left: 9px;
     z-index: 200;
+  }
+
+  &:not(.menu_opened):after {
+    display: none;
   }
 }
 

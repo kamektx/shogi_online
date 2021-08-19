@@ -92,4 +92,6 @@ export type TState = {
   _onSelectNariFunari: (move: TMove, callback: (move: TMove) => void) => void,
   setTemporaryInformation: (value: TInformation) => void,
   temporaryInformation: TInformation | undefined,
+  forwardMenuOpened: boolean,
+  setForwardMenuOpened: (value: boolean) => void,
 }

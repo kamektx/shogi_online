@@ -9,6 +9,8 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { getCSAPieceName } from '../func/GameFunctions';
 import { TPieceAll, TState } from '../types/types';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 export function OperationButton({ className, style, icon, _onClick }: { className?: string, style?: React.CSSProperties, icon: IconProp, _onClick: () => void }) {
   return (
@@ -45,16 +47,30 @@ export function BackButton({ changeCurrentID, currentID }: Pick<TState, "changeC
   )
 }
 
-export function ForwardButton({ changeCurrentID, currentID }: Pick<TState, "changeCurrentID" | "currentID">) {
+export function ForwardButton({ changeCurrentID, currentID, forwardMenuOpened, setForwardMenuOpened }: Pick<TState, "changeCurrentID" | "currentID" | "forwardMenuOpened" | "setForwardMenuOpened">) {
+
+  useEffect(() => {
+    setForwardMenuOpened(false);
+  }, [currentID]);
   const forwardIDs = moves.get(currentID)!.forward;
   const isDisabled = forwardIDs.length === 0;
   const _onClick = () => {
     if (isDisabled) return;
-    changeCurrentID(forwardIDs[0], "forward");
+    if (forwardMenuOpened) {
+      setForwardMenuOpened(false);
+      return;
+    }
+    if (forwardIDs.length === 1) {
+      changeCurrentID(forwardIDs[0], "forward");
+      return;
+    }
+    setForwardMenuOpened(true);
+    return;
   }
   return (
     <OperationButton icon={faChevronRight} _onClick={_onClick} className={cn({
       [styles.disabled]: isDisabled,
+      [styles.menu_opened]: forwardMenuOpened,
     })} style={{ left: "2px", fontSize: "110%" }} />
   )
 }

@@ -1,13 +1,12 @@
 import styles from '../styles/Home.module.scss'
 import cn from 'classnames'
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faChevronRight, faDownload, faStepBackward, faStepForward } from '@fortawesome/free-solid-svg-icons'
-import { faClipboard, faLightbulb } from '@fortawesome/free-regular-svg-icons'
+import { faLightbulb } from '@fortawesome/free-regular-svg-icons'
 import Select from 'react-select'
-import MyHead from '../components/MyHead'
 import Board from '../components/Board'
 import TurnCounter from './TurnCounter'
 import Information from './Information'
+import ForwardMenu from './ForwardMenu'
 import { BackButton, BackToStartButton, ExportKifuButton, ForwardButton, GoToLatestButton } from './OperationButtons'
 import { useCallback, useState } from 'react'
 import { TMessage, TMove, TPieceFace, TState } from '../types/types'
@@ -23,6 +22,7 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
 
   const [isEnteringName, setIsEnteringName] = useState(true);
   const [nameValue, setNameValue] = useState("");
+  const [forwardMenuOpened, setForwardMenuOpened] = useState(false);
 
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
@@ -52,7 +52,8 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
   }
 
   const _onEnterName = () => {
-    playerInfo.name = nameValue;
+    const normalizedName = nameValue.replace(/^\s*(.*?)\s*$/, "$1");
+    playerInfo.name = nameValue === "" ? "Nanashi" : normalizedName;
     setIsEnteringName(false);
   }
 
@@ -65,13 +66,11 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
               <BackToStartButton changeCurrentID={changeCurrentID} currentID={currentID} />
               <BackButton changeCurrentID={changeCurrentID} currentID={currentID}></BackButton>
               <TurnCounter currentID={currentID}></TurnCounter>
-              <ForwardButton changeCurrentID={changeCurrentID} currentID={currentID} />
+              <ForwardButton changeCurrentID={changeCurrentID} currentID={currentID} forwardMenuOpened={forwardMenuOpened} setForwardMenuOpened={setForwardMenuOpened} />
               <GoToLatestButton changeCurrentID={changeCurrentID} currentID={currentID} />
             </div>
           </div>
-          <div className={styles.menu_wrap}>
-            <div className={cn(styles.menu_popup)}></div>
-          </div>
+          <ForwardMenu currentID={currentID} forwardMenuOpened={forwardMenuOpened} setForwardMenuOpened={setForwardMenuOpened} changeCurrentID={changeCurrentID} />
           <Information temporaryInformation={temporaryInformation} currentID={currentID} />
         </header>
 
@@ -80,7 +79,7 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
         </main>
 
         <footer className={cn(styles.footer, styles.header_footer)}>
-          <div className={styles.menu_wrap}>
+          <div className={cn(styles.wrap, styles.menu_wrap)}>
             <div className={cn(styles.menu_popup)}></div>
           </div>
           <div className={styles.wrap}>
