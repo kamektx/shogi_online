@@ -9,6 +9,7 @@ import { useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { createID, handleNewMove } from '../../func/GameFunctions'
 import { url } from '../../func/url'
+import { Howl, Howler } from 'howler'
 
 export const gameProperty = {
   csaVersion: "V2.2",
@@ -82,14 +83,18 @@ export const boardStates = new Map<string, TBoardState>().set("START", initialBo
 
 export const messageIDs: string[] = ["FIRST"];
 
-export let moveSound: HTMLAudioElement;
+export let moveSound: Howl;
 if (process.browser) {
-  moveSound = new Audio(url("/move.mp3"));
+  moveSound = new Howl({
+    src: url("/move.mp3"),
+  });
 }
-export let selectSound: HTMLAudioElement;
+export let selectSound: Howl;
 if (process.browser) {
-  selectSound = new Audio(url("/select.mp3"));
-  selectSound.volume = 0.1;
+  selectSound = new Howl({
+    src: url("/select.mp3"),
+    volume: 0.12,
+  });
 }
 
 export default function Home() {
@@ -226,13 +231,13 @@ export default function Home() {
       case "newMove":
         if (isFromRequestAllMessages) break;
         moveSound.pause();
-        moveSound.currentTime = 0;
+        moveSound.seek(0);
         moveSound.play();
         break;
       default:
         if (isFromRequestAllMessages) break;
         selectSound.pause();
-        selectSound.currentTime = 0;
+        selectSound.seek(0);
         selectSound.play();
         break;
     }
