@@ -17,7 +17,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={cn(styles.create_room_popup, styles.popup)}>
           <div className={styles.wrap}>
-            <div className={cn(styles.button)}
+            <div className={cn(styles.button, styles.enter_button)}
               onClick={() => _onCreateRoom()}>
               <div>Create new room</div>
             </div>

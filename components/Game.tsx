@@ -13,7 +13,7 @@ import { TMessage, TMove, TPieceFace, TState } from '../types/types'
 import { getNariPiece, handleNewMove, makeNewMove, ordinal } from '../func/GameFunctions'
 import { moves, playerInfo } from '../pages/games/[gameID]'
 
-export default function Game({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID, setTemporaryInformation, temporaryInformation }: Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID" | "setTemporaryInformation" | "temporaryInformation">) {
+export default function Game({ changeCurrentID, currentID, handleNewMoveAndChangeCurrentID, setTemporaryInformation, temporaryInformation, notification, setNotification }: Pick<TState, "changeCurrentID" | "currentID" | "handleNewMoveAndChangeCurrentID" | "setTemporaryInformation" | "temporaryInformation" | "notification" | "setNotification">) {
   const [selectionNariFunari, setSelectionNariFunari] = useState<{
     isSelecting: boolean,
     move?: TMove,
@@ -129,6 +129,17 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
           <div className={cn(styles.enter_button, styles.button)}
             onClick={() => _onEnterName()}>
             <div>Enter</div>
+          </div>
+        </div>
+      </div>
+      <div className={cn(styles.notification_popup, styles.popup, {
+        [styles.disabled]: !notification.isActive,
+      })}>
+        <div className={styles.wrap}>
+          <div className={styles.label} dangerouslySetInnerHTML={{ __html: notification.data }}></div>
+          <div className={cn(styles.enter_button, styles.button)}
+            onClick={() => setNotification({ ...notification, isActive: false })}>
+            <div>OK</div>
           </div>
         </div>
       </div>

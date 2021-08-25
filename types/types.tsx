@@ -84,6 +84,11 @@ export type TInformation = {
   ms: number
 }
 
+export type TNotification = {
+  data: string,
+  isActive: boolean,
+}
+
 export type TState = {
   currentID: string,
   changeCurrentID: (id: string, command: TCommandOfChangeCurrentID) => Promise<boolean>,
@@ -96,4 +101,6 @@ export type TState = {
   setForwardMenuOpened: (value: boolean) => void,
   isReversed: boolean,
   setIsReversed: (value: boolean) => void,
+  notification: TNotification,
+  setNotification: (value: TNotification) => void,
 }

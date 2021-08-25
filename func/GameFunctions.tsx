@@ -383,7 +383,7 @@ export const checkNewMove = (move: TMove): boolean => {
   }
 
   if (!canSelectMovingPiece(move)) return false;
-  if (!canMovePiece(move)) return false;
+  if (canMovePiece(move) === 0) return false;
   if (!isNariOK(move)) return false;
   if (move.captured !== getCapturedPiece(move)) return false;
   return true;

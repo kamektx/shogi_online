@@ -3,7 +3,7 @@ import cn from 'classnames'
 import Game from '../../components/Game'
 import MyHead from '../../components/MyHead'
 import { useState } from 'react'
-import { TMove, TBoardState, TPieceFace, TPieceAll, TMessage, TAllMessages, TApi, TInformation, TCommandOfChangeCurrentID } from '../../types/types'
+import { TMove, TBoardState, TPieceFace, TPieceAll, TMessage, TAllMessages, TApi, TInformation, TCommandOfChangeCurrentID, TNotification } from '../../types/types'
 import { useRouter } from 'next/dist/client/router'
 import { useEffect } from 'react'
 import { io } from 'socket.io-client'
@@ -104,6 +104,12 @@ export default function Home() {
   const [gameID, setGameID] = useState("");
   const [socketID, setSocketID] = useState("");
   const [temporaryInformation, setTemporaryInformation] = useState<TInformation | undefined>(undefined);
+  const [notification, setNotification] = useState<TNotification>({
+    data: `<p>Server maintenance is coming soon.</p>
+    <p>8/26 0:00 - 8/26 3:00 (JST)</p>
+    <p>All game data will be deleted after the server maintenance. Sorry!</p>`,
+    isActive: true,
+  })
 
   const parseMessage = (message: TMessage, isFromRequestAllMessages = false) => {
     if (message.lastMessageID !== messageIDs[messageIDs.length - 1]) throw new Error("There is messages that this browser haven't received.");
@@ -210,6 +216,13 @@ export default function Home() {
       }
     })
 
+    socket.on("notification", (html: string) => {
+      setNotification({
+        data: html,
+        isActive: true,
+      })
+    })
+
     socket.on("disconnect", () => {
       setSocketID("");
     })
@@ -312,7 +325,7 @@ export default function Home() {
   return (
     <>
       <MyHead />
-      <Game changeCurrentID={changeCurrentID} currentID={currentID} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} setTemporaryInformation={setTemporaryInformation} temporaryInformation={temporaryInformation} />
+      <Game changeCurrentID={changeCurrentID} currentID={currentID} handleNewMoveAndChangeCurrentID={handleNewMoveAndChangeCurrentID} setTemporaryInformation={setTemporaryInformation} temporaryInformation={temporaryInformation} notification={notification} setNotification={setNotification} />
     </>
   )
 }
