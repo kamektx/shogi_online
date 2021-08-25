@@ -128,7 +128,7 @@ export default function Home() {
 
   const sendMessage = async (message: TMessage): Promise<boolean> => {
     messageIDs.push(message.messageID);
-    const res = await fetch("https://t7c.be/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function Home() {
   }
 
   const requestAllMessages = async () => {
-    const res = await fetch("https://t7c.be/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -171,6 +171,7 @@ export default function Home() {
     boardStates.set("START", initialBoardState);
     messageIDs.splice(0);
     messageIDs.push("FIRST");
+    setCurrentID("START");
     try {
       for (const message of allMessages) {
         parseMessage(message, true);
@@ -180,7 +181,7 @@ export default function Home() {
     }
   }
   const requestNotification = async () => {
-    const res = await fetch("https://t7c.be/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -209,12 +210,11 @@ export default function Home() {
       }
     }
 
-    const socket = io("https://t7c.be", {
+    const socket = io("https://api.techchair.net", {
       // transports: ["websocket"],
       path: "/shogi/socket",
       query: {
         gameID: myGameID,
-
       },
     })
 
