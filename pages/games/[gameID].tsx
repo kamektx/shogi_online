@@ -220,7 +220,6 @@ export default function Home() {
 
     socket.on("connect", () => {
       console.log("Socket Connected!");
-      console.log(socket);
       setSocketID(socket.id);
     })
 
