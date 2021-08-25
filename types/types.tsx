@@ -72,9 +72,9 @@ export type TMessage = {
 export type TAllMessages = TMessage[]
 
 export type TApi = {
-  command: ("sendMessage" | "requestAllMessages"),
-  gameID: string,
-  socketID: string,
+  command: ("sendMessage" | "requestAllMessages" | "requestNotification"),
+  gameID?: string,
+  socketID?: string,
   message?: TMessage,
 }
 

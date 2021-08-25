@@ -105,10 +105,8 @@ export default function Home() {
   const [socketID, setSocketID] = useState("");
   const [temporaryInformation, setTemporaryInformation] = useState<TInformation | undefined>(undefined);
   const [notification, setNotification] = useState<TNotification>({
-    data: `<p>Server maintenance is coming soon.</p>
-    <p>8/26 0:00 - 8/26 3:00 (JST)</p>
-    <p>All game data will be deleted after the server maintenance. Sorry!</p>`,
-    isActive: true,
+    data: "",
+    isActive: false,
   })
 
   const parseMessage = (message: TMessage, isFromRequestAllMessages = false) => {
@@ -130,7 +128,7 @@ export default function Home() {
 
   const sendMessage = async (message: TMessage): Promise<boolean> => {
     messageIDs.push(message.messageID);
-    const res = await fetch("https://api.techchair.net/shogi/rest", {
+    const res = await fetch("https://t7c.be/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -153,7 +151,7 @@ export default function Home() {
   }
 
   const requestAllMessages = async () => {
-    const res = await fetch("https://api.techchair.net/shogi/rest", {
+    const res = await fetch("https://t7c.be/shogi/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -181,6 +179,25 @@ export default function Home() {
       console.error("requestAllMessages(): " + e.message);
     }
   }
+  const requestNotification = async () => {
+    const res = await fetch("https://t7c.be/shogi/rest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        command: "requestNotification",
+      } as TApi),
+    });
+    if (!res.ok) throw new Error("requestNotification api failed.");
+    const _notification = await res.json() as TNotification;
+    console.log(_notification);
+    setNotification(_notification);
+  }
+
+  useEffect(() => {
+    requestNotification();
+  }, [])
 
   useEffect(() => {
     if (router.query["gameID"] == null) return;
@@ -192,8 +209,7 @@ export default function Home() {
       }
     }
 
-
-    const socket = io("https://api.techchair.net", {
+    const socket = io("https://t7c.be", {
       // transports: ["websocket"],
       path: "/shogi/socket",
       query: {
@@ -216,10 +232,10 @@ export default function Home() {
       }
     })
 
-    socket.on("notification", (html: string) => {
+    socket.on("notification", (_notification: TNotification) => {
       setNotification({
-        data: html,
-        isActive: true,
+        data: _notification.data,
+        isActive: _notification.isActive,
       })
     })
 

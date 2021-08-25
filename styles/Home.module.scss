@@ -439,12 +439,6 @@ $popup_color: #222;
       &:hover {
         background-color: rgba(187, 225, 255, 1);
       }
-    }
-
-    .enter_button {
-      width: 160px;
-      height: 36px;
-      border-radius: $border-radius;
 
       &>* {
         position: relative;
@@ -452,6 +446,12 @@ $popup_color: #222;
         left: 50%;
         transform: translate(-50%, -50%);
       }
+    }
+
+    .enter_button {
+      width: 160px;
+      height: 36px;
+      border-radius: $border-radius;
     }
   }
 }
@@ -475,7 +475,7 @@ $popup_color: #222;
       margin: 0;
 
       @include b1 {
-        width: 120px;
+        flex: 0 0 120px;
         height: 80px;
         font-size: $b1-font-size;
       }
