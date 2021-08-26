@@ -128,7 +128,7 @@ export default function Home() {
 
   const sendMessage = async (message: TMessage): Promise<boolean> => {
     messageIDs.push(message.messageID);
-    const res = await fetch("https://api.techchair.net/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi2/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default function Home() {
   }
 
   const requestAllMessages = async () => {
-    const res = await fetch("https://api.techchair.net/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi2/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -181,7 +181,7 @@ export default function Home() {
     }
   }
   const requestNotification = async () => {
-    const res = await fetch("https://api.techchair.net/shogi/rest", {
+    const res = await fetch("https://api.techchair.net/shogi2/rest", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -212,7 +212,7 @@ export default function Home() {
 
     const socket = io("https://api.techchair.net", {
       // transports: ["websocket"],
-      path: "/shogi/socket",
+      path: "/shogi2/socket",
       query: {
         gameID: myGameID,
       },
