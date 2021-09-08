@@ -99,10 +99,10 @@ export default function Game({ changeCurrentID, currentID, handleNewMoveAndChang
         [styles.disabled]: !selectionNariFunari.isSelecting,
       })}>
         <div className={styles.wrap}>
-          <div className={cn(styles.nari_funari_button, styles.button)} onClick={() => _onClickNariFunariButton(true)}>
+          <div className={cn(styles.nari_funari_button, styles.button)} onPointerDown={() => _onClickNariFunariButton(true)}>
             <div>{selectionNariFunari.move != undefined ? getNariPiece(selectionNariFunari.move?.before.piece as TPieceFace) : ""}</div>
           </div>
-          <div className={cn(styles.nari_funari_button, styles.button)} onClick={() => _onClickNariFunariButton(false)}>
+          <div className={cn(styles.nari_funari_button, styles.button)} onPointerDown={() => _onClickNariFunariButton(false)}>
             <div>{selectionNariFunari.move?.before.piece}</div>
           </div>
         </div>
